@@ -1,0 +1,32 @@
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: utf-8
+      force: true
+
+spring:
+  # h2 데이터베이스 연결
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test;MODE=MySQL
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: create
+    properties:
+      '[hibernate.default.batch_fetch_size]': 100
+      '[hibernate.format_sql]': true
+    show-sql: true
+  output:
+    ansi:
+      enabled: always
+logging:
+  level:
+    '[com.example.banksample]': debug
+    '[org.hibernate.type]': trace
