@@ -12,6 +12,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     /*
     SELECT * from user where username = ?
     * */
-    Optional<User> findByUseranme(String username);
+    Optional<User> findByUsername(String username);
 
 }
