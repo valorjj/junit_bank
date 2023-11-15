@@ -17,7 +17,6 @@ public class JwtProcess {
 
 	}
 
-
 	public static String createToken(LoginUser loginUser) {
 		String jwtToken = JWT.create()
 			// 토큰의 이름

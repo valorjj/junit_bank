@@ -27,5 +27,16 @@ spring:
     ansi:
       enabled: always
 logging:
+  pattern:
+    level: "%5p [${spring.application.name},%X{traceId:-},%X{spanId:-}]"
   level:
     '[com.example.banksample]': debug
+
+
+### Open API (Swagger UI)
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+  paths-to-match: /**
