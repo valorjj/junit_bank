@@ -6,9 +6,7 @@ import com.example.banksample.util.RegexCollection;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class UserRequestDTO {
@@ -18,6 +16,8 @@ public class UserRequestDTO {
 
 	@Getter
 	@Setter
+	@NoArgsConstructor
+	@AllArgsConstructor
 	public static class LoginRequestDTO {
 		private String username;
 		private String password;
