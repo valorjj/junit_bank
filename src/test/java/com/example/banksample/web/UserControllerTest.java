@@ -3,6 +3,7 @@ package com.example.banksample.web;
 import com.example.banksample.config.dummy.DummyObject;
 import com.example.banksample.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,6 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @Slf4j
+@Transactional
 class UserControllerTest extends DummyObject {
 
 	@Autowired
@@ -67,8 +69,8 @@ class UserControllerTest extends DummyObject {
 	void join_fail_test() throws Exception {
 		// given
 		JoinRequestDTO joinRequestDTO = JoinRequestDTO.builder()
-			.username("bori")
-			.fullname("kim bori")
+			.username("jeongjin")
+			.fullname("kim jeongjin")
 			.password("1234")
 			.email("admin@nate.com")
 			.build();
@@ -91,7 +93,7 @@ class UserControllerTest extends DummyObject {
 
 	void inputTestData() {
 		// [해결] Unique index or primary key violation 에러 발생
-		userRepository.deleteAll();
-		userRepository.save(newUser("bori", "kim bori"));
+		// userRepository.deleteAll();
+		userRepository.save(newUser("jeongjin", "kim jeongjin"));
 	}
 }

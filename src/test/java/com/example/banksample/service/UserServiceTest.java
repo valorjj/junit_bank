@@ -2,7 +2,6 @@ package com.example.banksample.service;
 
 import com.example.banksample.config.dummy.DummyObject;
 import com.example.banksample.domain.user.User;
-import com.example.banksample.dto.user.UserResponseDTO;
 import com.example.banksample.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -18,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.util.Optional;
 
 import static com.example.banksample.dto.user.UserRequestDTO.JoinRequestDTO;
+import static com.example.banksample.dto.user.UserResponseDTO.JoinResponseDTO;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
@@ -58,7 +58,7 @@ class UserServiceTest extends DummyObject {
         when(userRepository.save(any())).thenReturn(user);
 
         // when
-        UserResponseDTO.JoinResponseDTO joinResponseDTO = userServiceV1.signUp(joinRequestDTO);
+        JoinResponseDTO joinResponseDTO = userServiceV1.signUp(joinRequestDTO);
         log.info("[*] joinResponseDTO -> {}", joinResponseDTO.toString());
 
         // then

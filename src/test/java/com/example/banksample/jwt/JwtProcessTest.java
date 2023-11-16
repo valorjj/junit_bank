@@ -1,10 +1,8 @@
-package com.example.banksample.config.jwt;
+package com.example.banksample.jwt;
 
 import com.example.banksample.auth.LoginUser;
 import com.example.banksample.domain.user.User;
 import com.example.banksample.domain.user.UserEnum;
-import com.example.banksample.jwt.JwtProcess;
-import com.example.banksample.jwt.JwtTokenVO;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
