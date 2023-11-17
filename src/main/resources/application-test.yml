@@ -18,18 +18,29 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
     properties:
-      '[hibernate.default.batch_fetch_size]': 100
-      '[hibernate.format_sql]': true
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        use_sql_comments: true
+        default_batch_fetch_size: 100
     show-sql: true
   output:
     ansi:
       enabled: always
+
 logging:
   level:
-    '[com.example.banksample]': debug
-    '[org.hibernate.type]': trace
+    org:
+      hibernate:
+        orm:
+          jdbc:
+            bind: trace
+        SQL: debug
+    com:
+      example:
+        banksample: debug
 
 
 ### Open API (Swagger UI)

@@ -14,7 +14,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
 	// @Query("select distinct a from Account a join fetch a.user")
 	@Query("SELECT ac FROM Account ac JOIN FETCH ac.user u WHERE ac.number = :number")
-	Optional<Account> findByNumber(Long accountNumber);
+	Optional<Account> findByNumber(Long number);
 
 	// select * from account where user_id = :id
 	List<Account> findByUser_id(Long id);

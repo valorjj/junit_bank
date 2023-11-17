@@ -9,7 +9,7 @@ spring:
   # h2 데이터베이스 연결
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:test;MODE=MySQL
+    url: jdbc:h2:tcp://localhost:1521/bank;MODE=MySQL
     username: sa
     password:
   h2:
@@ -18,7 +18,7 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
     properties:
       '[hibernate.default.batch_fetch_size]': 100
       '[hibernate.format_sql]': true

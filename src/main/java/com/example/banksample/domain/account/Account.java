@@ -58,4 +58,12 @@ public class Account extends BaseTime {
 			throw new CustomApiException("계좌의 소유자가 아닙니다.");
 		}
 	}
+
+	/*
+	 * 계좌 입금
+	 * */
+	public void deposit(Long amount) {
+		balance += amount;
+	}
+
 }

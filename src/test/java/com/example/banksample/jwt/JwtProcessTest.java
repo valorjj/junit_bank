@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 
 
 /**
@@ -15,7 +17,15 @@ import org.springframework.boot.test.context.SpringBootTest;
  */
 @Slf4j
 @SpringBootTest
+@Sql("classpath:db/teardown.sql")
+@ActiveProfiles("test")
 class JwtProcessTest {
+
+	private String createToken() {
+		User user = User.builder().id(1L).role(UserEnum.CUSTOMER).build();
+		LoginUser loginUser = new LoginUser(user);
+		return JwtProcess.createToken(loginUser).replace(JwtTokenVO.TOKEN_PREFIX, "");
+	}
 
 	@Test
 	void create_test() throws Exception {
@@ -35,7 +45,7 @@ class JwtProcessTest {
 	@Test
 	void verify_test() throws Exception {
 		// given
-		String givenToken = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqdW5pdC1iYW5rLWp3dCIsImlzcyI6ImxvY2FsIiwiZXhwIjoxNzAwMTYxODkxLCJpZCI6MSwicm9sZSI6IkNVU1RPTUVSIn0.EsTQQagIWXVr7eNTWFtEi_M61NIl3RunSaJ2I0TRAbkz2yWGJffMw5ozb7DCaq4MngVKkgdqWQQqqJXcrhRr3g";
+		String givenToken = createToken();
 
 		// when
 		LoginUser loginUser = JwtProcess.verifyToken(givenToken);

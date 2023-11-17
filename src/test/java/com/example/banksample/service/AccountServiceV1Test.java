@@ -108,12 +108,12 @@ class AccountServiceV1Test extends DummyObject {
 	@Test
 	void delete_account_by_number_test() throws Exception {
 		// given
-		Long number = 10001L;
+		Long number = 1001L;
 		Long userId = 1L;
 
 		// stub - 1
 		User newMockuser = newMockUser(userId, "jeongjin", "kim jeongjin");
-		Account newMockAccount = newMockAccount(1L, 10001L, 1000L, newMockuser);
+		Account newMockAccount = newMockAccount(1L, 1001L, 1000L, newMockuser);
 		when(accountRepository.findByNumber(any())).thenReturn(Optional.of(newMockAccount));
 
 		// when

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import static com.example.banksample.dto.account.AccountRequestDTO.AccountSaveRequestDTO;
 import static com.example.banksample.dto.account.AccountResponseDTO.AccountListResponseDTO;
 import static com.example.banksample.dto.account.AccountResponseDTO.AccountSaveResponseDTO;
+import static com.example.banksample.service.AccountServiceV1.*;
 
 @RestController
 @RequestMapping("/api")
@@ -46,11 +47,20 @@ public class AccountController {
 
 	/**
 	 * 특정 계좌를 삭제한다.
-	 * */
+	 */
 	@DeleteMapping("/admin/account/{number}")
 	public ResponseEntity<?> deleteAccount(@PathVariable Long number, @AuthenticationPrincipal LoginUser loginUser) {
 		accountServiceV1.deleteAccount(number, loginUser.getUser().getId());
 		return new ResponseEntity<>(new ResponseDTO<>(1, "계좌 삭제가 완료되었습니다.", null), HttpStatus.OK);
+	}
+
+	@PostMapping("/account/deposit")
+	public ResponseEntity<?> depositAccount(
+			@RequestBody @Valid AccountDepositRequestDTO accountDepositRequestDTO,
+			BindingResult bindingResult
+	) {
+		AccountDepositResponseDTO accountDepositResponseDTO = accountServiceV1.depositAccount(accountDepositRequestDTO);
+		return new ResponseEntity<>(new ResponseDTO<>(1, "계좌 입금이 완료되었습니다.", accountDepositResponseDTO), HttpStatus.CREATED);
 	}
 
 

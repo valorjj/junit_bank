@@ -4,10 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -20,6 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @Slf4j
+@ActiveProfiles("test")
 class SecurityConfigTest {
 
     @Autowired
@@ -30,7 +31,7 @@ class SecurityConfigTest {
     void authenticate_test() throws Exception {
         // given
         // when
-        ResultActions resultActions = mvc.perform(get("/api/hello"));
+        ResultActions resultActions = mvc.perform(get("/api/test/hello"));
         String body = resultActions.andReturn().getResponse().getContentAsString();
         int status = resultActions.andReturn().getResponse().getStatus();
         log.info("body -> {}", body);
