@@ -1,10 +1,10 @@
-package com.example.banksample.repository;
+	package com.example.banksample.repository;
 
-import com.example.banksample.domain.transaction.Transaction;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+	import com.example.banksample.domain.transaction.Transaction;
+	import org.springframework.data.jpa.repository.JpaRepository;
+	import org.springframework.stereotype.Repository;
 
-@Repository
-public interface TransactionRepository extends JpaRepository<Transaction, Long> {
+	@Repository
+	public interface TransactionRepository extends JpaRepository<Transaction, Long>, TransactionDAO {
 
-}
+	}

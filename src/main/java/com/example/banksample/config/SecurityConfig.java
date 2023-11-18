@@ -82,6 +82,8 @@ public class SecurityConfig {
 		configuration.addAllowedOriginPattern("*");
 		// 클라이언트에서 쿠키 요청 허용
 		configuration.setAllowCredentials(true);
+		// 헤더 중 노출시킬 값을 지정한다.
+		configuration.addExposedHeader("Authorization");
 
 		/**
 		 * 모든 엔드포인트는 도메인 + '/' 로 시작하기 때문에,

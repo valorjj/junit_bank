@@ -28,7 +28,6 @@ public class User extends BaseTime {
 	@Column(unique = true, nullable = false, length = 20)
 	private String username;
 
-	// TODO: 패스워드 인코딩
 	@Column(nullable = false, length = 60)
 	private String password;
 

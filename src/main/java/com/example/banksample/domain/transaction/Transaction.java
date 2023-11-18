@@ -15,62 +15,67 @@ import lombok.NoArgsConstructor;
 @Getter
 public class Transaction extends BaseTime {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "withdraw_account_id")
-    private Account withdrawAccount;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	private Account withdrawAccount;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "deposit_account_id")
-    private Account depositAccount;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	private Account depositAccount;
 
-    @Column(nullable = false)
-    private Long amount;
+	@Column(name = "amount", nullable = false)
+	private Long amount;
 
-    private Long withdrawAccountBalance;
-    private Long depositAccountBalance;
+	@Column(name = "withdraw_balance")
+	private Long withdrawAccountBalance;
 
-    /**
-     * WITHDRAW: 출금
-     * DEPOSIT: 입금
-     * TRANSFER: 이체
-     * LOG: 내역조회
-     * */
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private TransactionEnum type;
+	@Column(name = "deposit_balance")
+	private Long depositAccountBalance;
 
-    public void setDepositAccount(Account depositAccount) {
-        this.depositAccount = depositAccount;
-    }
+	/**
+	 * WITHDRAW: 출금
+	 * DEPOSIT: 입금
+	 * TRANSFER: 이체
+	 * LOG: 내역조회
+	 */
+	@Column(name = "type", nullable = false)
+	@Enumerated(EnumType.STRING)
+	private TransactionEnum type;
 
-    public void setWithdrawAccount(Account withdrawAccount) {
-        this.withdrawAccount = withdrawAccount;
-    }
 
-    /**
-     * 계좌가 삭제되는 경우도, 로그는 남아야한다.
-     *
-     *
-     * */
-    private String sender;
-    private String receiver;
-    private String tel;
+	public void setDepositAccount(Account depositAccount) {
+		this.depositAccount = depositAccount;
+	}
 
-    @Builder
-    public Transaction(Long id, Account withdrawAccount, Account depositAccount, Long amount, Long withdrawAccountBalance, Long depositAccountBalance, TransactionEnum type, String sender, String receiver, String tel) {
-        this.id = id;
-        this.withdrawAccount = withdrawAccount;
-        this.depositAccount = depositAccount;
-        this.amount = amount;
-        this.withdrawAccountBalance = withdrawAccountBalance;
-        this.depositAccountBalance = depositAccountBalance;
-        this.type = type;
-        this.sender = sender;
-        this.receiver = receiver;
-        this.tel = tel;
-    }
+	public void setWithdrawAccount(Account withdrawAccount) {
+		this.withdrawAccount = withdrawAccount;
+	}
+
+	/**
+	 * 계좌가 삭제되는 경우도, 로그는 남아야한다.
+	 */
+	@Column(name = "tx_sender")
+	private String sender;
+	@Column(name = "tx_receiver")
+	private String receiver;
+	@Column(name = "tx_tel")
+	private String tel;
+
+	@Builder
+	public Transaction(Long id, Account withdrawAccount, Account depositAccount, Long amount, Long withdrawAccountBalance, Long depositAccountBalance, TransactionEnum type, String sender, String receiver, String tel) {
+		this.id = id;
+		this.withdrawAccount = withdrawAccount;
+		this.depositAccount = depositAccount;
+		this.amount = amount;
+		this.withdrawAccountBalance = withdrawAccountBalance;
+		this.depositAccountBalance = depositAccountBalance;
+		this.type = type;
+		this.sender = sender;
+		this.receiver = receiver;
+		this.tel = tel;
+	}
 }

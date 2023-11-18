@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      >
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    <div class="container">
+        <form action="">
+            <input type="text" id="username" name="username" placeholder="Id">
+            <input type="password" id="password" name="password" placeholder="Password">
+            <button type="button" onclick="login()">Login</button>
+        </form>
+    </div>
+
+    <script th:inline="javascript">
+        async function login() {
+            let userLoginDTO = {
+                username: document.querySelector("#username").value,
+                password: document.querySelector("#password").value,
+            }
+            console.log("userLoginDTO", userLoginDTO);
+
+            let userLoginDTOJson = JSON.stringify(userLoginDTO);
+            console.log("userLoginDTOJson", userLoginDTOJson);
+
+            let response = await fetch("http://localhost:8199/api/login", {
+                method: "POST",
+                body: userLoginDTOJson,
+                headers: {
+                    "Content-Type": "application/json; charset=UTF-8"
+                }
+            }).then((res) => {
+                console.log(res.headers.get("Authorization"))
+                return res.json();
+            })
+
+            console.log(response);
+        }
+    </script>
+
+
+</body>
+</html>

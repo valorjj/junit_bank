@@ -1,8 +1,10 @@
 package com.example.banksample.config.dummy;
 
 import com.example.banksample.domain.account.Account;
+import com.example.banksample.domain.transaction.Transaction;
 import com.example.banksample.domain.user.User;
 import com.example.banksample.repository.AccountRepository;
+import com.example.banksample.repository.TransactionRepository;
 import com.example.banksample.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ public class DummyDevInit extends DummyObject implements CommandLineRunner {
 	private final UserRepository userRepository;
 	private final AccountRepository accountRepository;
 	private final EntityManager em;
+	private final TransactionRepository transactionRepository;
 
 	@Override
 	@Transactional
@@ -41,5 +44,14 @@ public class DummyDevInit extends DummyObject implements CommandLineRunner {
 		accountRepository.save(account3);
 		accountRepository.save(account4);
 		accountRepository.save(account5);
+
+		Transaction transaction1 = newTransferTransaction(account1, account2, accountRepository);
+		Transaction transaction2 = newTransferTransaction(account1, account3, accountRepository);
+		Transaction transaction3 = newTransferTransaction(account2, account1, accountRepository);
+
+		transactionRepository.save(transaction1);
+		transactionRepository.save(transaction2);
+		transactionRepository.save(transaction3);
+
 	}
 }

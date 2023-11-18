@@ -2,6 +2,7 @@ package com.example.banksample.web;
 
 
 import com.example.banksample.config.dummy.DummyObject;
+import com.example.banksample.domain.transaction.TransactionEnum;
 import com.example.banksample.domain.user.User;
 import com.example.banksample.repository.AccountRepository;
 import com.example.banksample.repository.UserRepository;
@@ -22,7 +23,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import static com.example.banksample.dto.account.AccountRequestDTO.AccountSaveRequestDTO;
+import static com.example.banksample.dto.account.AccountRequestDTO.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -52,10 +53,12 @@ class AccountControllerTest extends DummyObject {
 
 	@BeforeEach
 	void init() {
-		User jeongjin = userRepository.save(newUser("test", "kim jeongjin"));
-		User bori = userRepository.save(newUser("bori", "kim jeongjin"));
+		User jeongjin = userRepository.save(newUser("jeongjin", "jeongjin"));
+		User bori = userRepository.save(newUser("bori", "bori"));
 		accountRepository.save(newAccount(1001L, jeongjin));
-		accountRepository.save(newAccount(1002L, bori));
+		accountRepository.save(newAccount(1002L, jeongjin));
+		accountRepository.save(newAccount(2001L, bori));
+		accountRepository.save(newAccount(2002L, bori));
 		em.clear();
 	}
 
@@ -72,14 +75,14 @@ class AccountControllerTest extends DummyObject {
 	 * 따라서 오류를 해결하기 위해 아래와 같은 옵션을 부여한다.
 	 * {@code @WithUserDetails(value = "jeongjin", setupBefore = TestExecutionEvent.TEST_EXECUTION)}
 	 */
-	@WithUserDetails(value = "test", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+	@WithUserDetails(value = "jeongjin", setupBefore = TestExecutionEvent.TEST_EXECUTION)
 	@Test
 	void register_account_test() throws Exception {
 
 		// given
 		AccountSaveRequestDTO accountSaveRequestDTO = new AccountSaveRequestDTO();
-		accountSaveRequestDTO.setAccountNumber(9999L);
-		accountSaveRequestDTO.setAccountPassword(123456L);
+		accountSaveRequestDTO.setAccountNumber(1001L);
+		accountSaveRequestDTO.setAccountPassword(1234L);
 		String requestBody = om.writeValueAsString(accountSaveRequestDTO);
 		log.info("[*] requestBody -> {}", requestBody);
 
@@ -95,15 +98,93 @@ class AccountControllerTest extends DummyObject {
 	}
 
 	@Test
-	@WithUserDetails(value = "test", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+	@WithUserDetails(value = "jeongjin", setupBefore = TestExecutionEvent.TEST_EXECUTION)
 	void delete_account_test() throws Exception {
 		// given
-		Long number = 1001L;
+		long number = 1001L;
 
 		// when
 		ResultActions resultActions = mockMvc.perform(delete("/api/test/account/" + number));
 		String responseBody = resultActions.andReturn().getResponse().getContentAsString();
 		log.info("[*] responseBody -> {}", responseBody);
 
+	}
+
+
+	/**
+	 * 입금 테스트
+	 */
+	@Test
+	@WithUserDetails(value = "jeongjin", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+	void deposit_success_test() throws Exception {
+		// given
+		Long number = 1001L;
+		AccountDepositRequestDTO accountDepositRequestDTO = new AccountDepositRequestDTO();
+		accountDepositRequestDTO.setAmount(100L);
+		accountDepositRequestDTO.setTel("010-1234-5678");
+		accountDepositRequestDTO.setNumber(number);
+		accountDepositRequestDTO.setType(String.valueOf(TransactionEnum.DEPOSIT));
+		String requestBody = om.writeValueAsString(accountDepositRequestDTO);
+		log.info("requestBody -> {}", requestBody);
+		// when
+		ResultActions resultActions = mockMvc
+				.perform(post("/api/test/account/deposit").content(requestBody).contentType(MediaType.APPLICATION_JSON));
+		String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+		log.info("responseBody -> {}", responseBody);
+
+		/*
+		 * 서비스 테스트에서 입금 과정을 테스트 했다는 것을 전제하기 때문에
+		 * 컨트롤러 레이어에서는 DTO 가 제대로 생성되고, API 요청이 잘 이루어졌는지만 확인한다.
+		 * */
+
+		// then
+		resultActions.andExpect(status().isCreated());
+	}
+
+	@Test
+	@WithUserDetails(value = "jeongjin", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+	void withdraw_account_test() throws Exception {
+		long number = 1001L;
+		long password = 1234L;
+		WithdrawAccountRequestDTO withdrawAccountRequestDTO = new WithdrawAccountRequestDTO();
+		withdrawAccountRequestDTO.setAmount(100L);
+		withdrawAccountRequestDTO.setNumber(number);
+		withdrawAccountRequestDTO.setPassword(password);
+		withdrawAccountRequestDTO.setType(String.valueOf(TransactionEnum.WITHDRAW));
+
+		String requestBody = om.writeValueAsString(withdrawAccountRequestDTO);
+		log.info("requestBody -> {}", requestBody);
+
+		ResultActions resultActions = mockMvc
+				.perform(post("/api/test/account/withdraw").content(requestBody).contentType(MediaType.APPLICATION_JSON));
+		String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+		log.info("responseBody -> {}", responseBody);
+
+		// then
+		resultActions.andExpect(status().isCreated());
+
+	}
+
+	@Test
+	@WithUserDetails(value = "jeongjin", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+	void transfer_account_test() throws Exception {
+
+		TransferAccountRequestDTO transferAccountRequestDTO = new TransferAccountRequestDTO();
+		transferAccountRequestDTO.setWithdrawNumber(1001L);
+		transferAccountRequestDTO.setDepositNumber(2001L);
+		transferAccountRequestDTO.setWithdrawPassword(1234L);
+		transferAccountRequestDTO.setAmount(100L);
+		transferAccountRequestDTO.setType("TRANSFER");
+
+		String requestBody = om.writeValueAsString(transferAccountRequestDTO);
+		log.info("requestBody -> {}", requestBody);
+
+		ResultActions resultActions = mockMvc
+				.perform(post("/api/test/account/transfer").content(requestBody).contentType(MediaType.APPLICATION_JSON));
+		String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+		log.info("responseBody -> {}", responseBody);
+
+		// then
+		resultActions.andExpect(status().isCreated());
 	}
 }

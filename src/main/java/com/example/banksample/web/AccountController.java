@@ -11,10 +11,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import static com.example.banksample.dto.account.AccountRequestDTO.AccountSaveRequestDTO;
-import static com.example.banksample.dto.account.AccountResponseDTO.AccountListResponseDTO;
-import static com.example.banksample.dto.account.AccountResponseDTO.AccountSaveResponseDTO;
-import static com.example.banksample.service.AccountServiceV1.*;
+import static com.example.banksample.dto.account.AccountRequestDTO.*;
+import static com.example.banksample.dto.account.AccountResponseDTO.*;
 
 @RestController
 @RequestMapping("/api")
@@ -54,7 +52,7 @@ public class AccountController {
 		return new ResponseEntity<>(new ResponseDTO<>(1, "계좌 삭제가 완료되었습니다.", null), HttpStatus.OK);
 	}
 
-	@PostMapping("/account/deposit")
+	@PostMapping("/test/account/deposit")
 	public ResponseEntity<?> depositAccount(
 			@RequestBody @Valid AccountDepositRequestDTO accountDepositRequestDTO,
 			BindingResult bindingResult
@@ -63,5 +61,27 @@ public class AccountController {
 		return new ResponseEntity<>(new ResponseDTO<>(1, "계좌 입금이 완료되었습니다.", accountDepositResponseDTO), HttpStatus.CREATED);
 	}
 
+
+	/**
+	 * @Valid 바로 뒤 파라미터로 BindingResult 가 위치해야 한다.
+	 */
+	@PostMapping("/test/account/withdraw")
+	public ResponseEntity<?> withdrawAccount(@RequestBody @Valid WithdrawAccountRequestDTO accountWithdrawReqDto,
+	                                         BindingResult bindingResult,
+	                                         @AuthenticationPrincipal LoginUser loginUser) {
+		TransferAccountResponseDTO accountWithdrawResponseDTO = accountServiceV1.withdrawAccount(accountWithdrawReqDto,
+				loginUser.getUser().getId());
+		return new ResponseEntity<>(new ResponseDTO<>(1, "계좌 출금이 완료되었습니다.", accountWithdrawResponseDTO), HttpStatus.CREATED);
+	}
+
+
+	@PostMapping("/test/account/transfer")
+	public ResponseEntity<?> transferAccount(@RequestBody @Valid TransferAccountRequestDTO transferAccountRequestDTO,
+	                                         BindingResult bindingResult,
+	                                         @AuthenticationPrincipal LoginUser loginUser) {
+		TransferAccountResponseDTO transferAccountResponseDTO = accountServiceV1.transferAccount(transferAccountRequestDTO,
+				loginUser.getUser().getId());
+		return new ResponseEntity<>(new ResponseDTO<>(1, "계좌 출금이 완료되었습니다.", transferAccountResponseDTO), HttpStatus.CREATED);
+	}
 
 }

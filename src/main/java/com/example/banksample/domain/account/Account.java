@@ -9,8 +9,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.Objects;
-
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "tbl_account")
@@ -23,8 +21,10 @@ public class Account extends BaseTime {
 
 	@Column(unique = true, nullable = false, length = 10)
 	private Long number;        // 계좌번호
+
 	@Column(nullable = false, length = 6)
 	private Long password;      // 계좌 비밀번호
+
 	@Column(nullable = false)
 	private Long balance;       // 잔액 (기본값을 1000 으로 부여)
 
@@ -33,7 +33,7 @@ public class Account extends BaseTime {
 	 * 즉, @Getter 를 통해서 내가 제어권을 획득한다.
 	 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_account_to_user"))
 	private User user;
 
 	public void setUser(User user) {
@@ -54,7 +54,7 @@ public class Account extends BaseTime {
 	 */
 	public void checkOwner(Long userId) {
 		// id 를 조회하는 경우 지연로딩 발생하지 않는다.
-		if (!Objects.equals(user.getId(), userId)) {
+		if (this.user.getId().longValue() != userId.longValue()) {
 			throw new CustomApiException("계좌의 소유자가 아닙니다.");
 		}
 	}
@@ -63,7 +63,24 @@ public class Account extends BaseTime {
 	 * 계좌 입금
 	 * */
 	public void deposit(Long amount) {
-		balance += amount;
+		this.balance += amount;
+	}
+
+	public void checkPassword(Long password) {
+		if (this.password.longValue() != password.longValue()) {
+			throw new CustomApiException("계좌 비밀번호가 일치하지 않습니다.");
+		}
+	}
+
+	public void checkBalance(Long amount) {
+		if (this.balance < amount) {
+			throw new CustomApiException("계좌 잔액이 부족합니다.");
+		}
+	}
+
+	public void withdraw(Long amount) {
+		checkBalance(amount);
+		this.balance -= amount;
 	}
 
 }

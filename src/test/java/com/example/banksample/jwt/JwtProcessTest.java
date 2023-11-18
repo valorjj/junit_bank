@@ -53,7 +53,7 @@ class JwtProcessTest {
 		log.info("role -> {}", loginUser.getUser().getRole());
 
 		// then
-		Assertions.assertThat(loginUser.getUser().getId()).isEqualTo(1L);
+		Assertions.assertThat(loginUser.getUser().getId().longValue()).isEqualTo(1L);
 		Assertions.assertThat(loginUser.getUser().getRole()).isEqualTo(UserEnum.CUSTOMER);
 	}
 
