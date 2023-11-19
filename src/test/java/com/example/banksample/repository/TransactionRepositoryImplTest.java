@@ -36,6 +36,12 @@ class TransactionRepositoryImplTest extends DummyObject {
 	void init() {
 		insertData();
 		autoIncrementReset();
+
+		/*
+		 * 더미 데이터 삽입 후, 원치 않은 데이터가 1차 캐시에 저장되어 있는 상태를
+		 * 원치 않기 때문에 PC 초기화 필요!
+		 * */
+		em.clear();
 	}
 
 	@Test
@@ -104,9 +110,6 @@ class TransactionRepositoryImplTest extends DummyObject {
 
 		Transaction depositTransaction2 = transactionRepository.save(
 				newDepositTransaction(account2, accountRepository));
-
-//		em.clear();
-
 
 	}
 

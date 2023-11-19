@@ -38,9 +38,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Rollback
 @ActiveProfiles("test")
 class AccountControllerTest extends DummyObject {
+
 	@Autowired
 	private AccountRepository accountRepository;
-
 	@Autowired
 	private ObjectMapper om;
 	@Autowired
