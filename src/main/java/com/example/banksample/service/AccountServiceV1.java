@@ -9,6 +9,7 @@ import com.example.banksample.repository.AccountRepository;
 import com.example.banksample.repository.TransactionRepository;
 import com.example.banksample.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import java.util.Optional;
 import static com.example.banksample.dto.account.AccountRequestDTO.*;
 import static com.example.banksample.dto.account.AccountResponseDTO.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -207,6 +209,30 @@ public class AccountServiceV1 {
 
 		// DTO 응답
 		return new TransferAccountResponseDTO(withdrawAccountPS, transactionPS);
+	}
+
+	/**
+	 * 계좌 상세보기
+	 */
+	public AccountDetailsResponseDTO getAccountDetails(Long accountNumber, Long userId, Integer page) {
+		log.info("# 계좌 상세 조회 서비스 접근");
+		/*
+		 * 특정 계좌 전체 거래내역을 조회하기 때문에
+		 * 거래 유형은 ALL 로 고정
+		 * */
+		String type = "ALL";
+
+		// 계좌 조회
+		Account accountPS = accountRepository.findByNumber(accountNumber).orElseThrow(() -> new CustomApiException("해당 계좌를 찾을 수 없습니다."));
+
+		// 계좌 소유자 확인
+		accountPS.checkOwner(userId);
+
+		// 입출금 목록 확인
+		List<Transaction> transactionList = transactionRepository.findTransactionList(accountPS.getId(), type, page);
+
+		// DTO 반환
+		return new AccountDetailsResponseDTO(accountPS, transactionList);
 	}
 
 

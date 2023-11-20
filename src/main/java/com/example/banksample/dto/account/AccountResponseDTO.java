@@ -1,5 +1,6 @@
 package com.example.banksample.dto.account;
 
+
 import com.example.banksample.domain.account.Account;
 import com.example.banksample.domain.transaction.Transaction;
 import com.example.banksample.domain.user.User;
@@ -199,5 +200,71 @@ public class AccountResponseDTO {
 		}
 	}
 
+
+	@Getter
+	@Setter
+	@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+	public static class AccountDetailsResponseDTO {
+		private Long id;                            // 계좌 ID
+		private Long accountNumber;                 // 계좌번호
+		private Long balance;                       // 계좌 최종 잔액
+		private List<TransactionDTO> transactions;  // 거래내역 엔티티를 DTO 로 변환한 리스트
+
+		public AccountDetailsResponseDTO(Account account, List<Transaction> transactions) {
+			this.id = account.getId();
+			this.accountNumber = account.getNumber();
+			this.balance = account.getBalance();
+			this.transactions = transactions.stream()
+					.map(transaction -> new TransactionDTO(transaction, account.getNumber()))
+					.toList();
+		}
+
+		@Getter
+		@Setter
+		@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+		public class TransactionDTO {
+			private Long id;
+			private String type;
+			private Long amount;
+			private String sender;
+			private String receiver;
+			private String tel;
+			private Long balance;
+
+			public TransactionDTO(
+					Transaction transaction,
+					Long accountNumber
+			) {
+				this.id = transaction.getId();
+				this.type = String.valueOf(transaction.getType());
+				this.amount = transaction.getAmount();
+				this.sender = transaction.getSender();
+				this.receiver = transaction.getReceiver();
+				this.tel = transaction.getTel() == null ? "없음" : transaction.getTel();
+
+				// 출금계좌 null, 입금계좌 1001L
+				if (transaction.getDepositAccount() == null) {
+					this.balance = transaction.getWithdrawAccountBalance();
+				}
+				// 출금계좌 1001L, 입금계좌 null
+				else if (transaction.getWithdrawAccount() == null) {
+					this.balance = transaction.getDepositAccountBalance();
+				}
+				// 입, 출금 내역
+				else {
+					// 내가 찾는 계좌 == 입금 계좌
+					if (accountNumber.longValue() == transaction.getDepositAccount().getNumber().longValue()) {
+						this.balance = transaction.getDepositAccountBalance();
+					}
+					// 내가 찾는 계좌 == 출금 계좌
+					else {
+						this.balance = transaction.getWithdrawAccountBalance();
+					}
+				}
+			}
+		}
+
+
+	}
 
 }

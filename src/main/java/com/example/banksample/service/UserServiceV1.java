@@ -1,11 +1,11 @@
 package com.example.banksample.service;
 
-import com.example.banksample.dto.user.UserRequestDTO;
-import com.example.banksample.dto.user.UserResponseDTO;
+import static com.example.banksample.dto.user.UserRequestDTO.JoinRequestDTO;
+import static com.example.banksample.dto.user.UserResponseDTO.JoinResponseDTO;
 
 public interface UserServiceV1 {
 
-    UserResponseDTO.JoinResponseDTO signUp(UserRequestDTO.JoinRequestDTO joinRequestDTO);
+    JoinResponseDTO signUp(JoinRequestDTO joinRequestDTO);
 
 
 

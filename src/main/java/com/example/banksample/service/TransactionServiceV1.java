@@ -28,9 +28,9 @@ public class TransactionServiceV1 {
 		Account accountPS = accountRepository.findByNumber(accountNumber).orElseThrow(() -> new CustomApiException("해당 계좌를 찾을 수 없습니다."));
 		// 2. 계좌 소유 여부 확인
 		accountPS.checkOwner(userid);
-
+		// 3. 거래내역 리스트 찾기
 		List<Transaction> transactionList = transactionRepository.findTransactionList(accountPS.getId(), transactionType, page);
-
+		// 4. DTO 반환
 		return new TransactionListResponseDTO(accountPS, transactionList);
 	}
 

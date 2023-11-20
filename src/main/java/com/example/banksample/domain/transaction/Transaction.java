@@ -47,13 +47,13 @@ public class Transaction extends BaseTime {
 	private TransactionEnum type;
 
 
-	public void setDepositAccount(Account depositAccount) {
-		this.depositAccount = depositAccount;
-	}
-
-	public void setWithdrawAccount(Account withdrawAccount) {
-		this.withdrawAccount = withdrawAccount;
-	}
+//	public void setDepositAccount(Account depositAccount) {
+//		this.depositAccount = depositAccount;
+//	}
+//
+//	public void setWithdrawAccount(Account withdrawAccount) {
+//		this.withdrawAccount = withdrawAccount;
+//	}
 
 	/**
 	 * 계좌가 삭제되는 경우도, 로그는 남아야한다.
@@ -77,5 +77,20 @@ public class Transaction extends BaseTime {
 		this.sender = sender;
 		this.receiver = receiver;
 		this.tel = tel;
+	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + "(" +
+				"id = " + getId() + ", " +
+				"createdAt = " + getCreatedAt() + ", " +
+				"modifiedAt = " + getModifiedAt() + ", " +
+				"amount = " + getAmount() + ", " +
+				"withdrawAccountBalance = " + getWithdrawAccountBalance() + ", " +
+				"depositAccountBalance = " + getDepositAccountBalance() + ", " +
+				"type = " + getType() + ", " +
+				"sender = " + getSender() + ", " +
+				"receiver = " + getReceiver() + ", " +
+				"tel = " + getTel() + ")";
 	}
 }

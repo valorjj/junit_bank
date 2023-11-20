@@ -2,9 +2,12 @@ package com.example.banksample.web;
 
 
 import com.example.banksample.config.dummy.DummyObject;
+import com.example.banksample.domain.account.Account;
+import com.example.banksample.domain.transaction.Transaction;
 import com.example.banksample.domain.transaction.TransactionEnum;
 import com.example.banksample.domain.user.User;
 import com.example.banksample.repository.AccountRepository;
+import com.example.banksample.repository.TransactionRepository;
 import com.example.banksample.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
@@ -17,7 +20,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
@@ -25,8 +27,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import static com.example.banksample.dto.account.AccountRequestDTO.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -35,31 +36,55 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Slf4j
 // @Transactional
 @Sql("classpath:db/teardown.sql")
-@Rollback
+// @Rollback
 @ActiveProfiles("test")
 class AccountControllerTest extends DummyObject {
 
 	@Autowired
 	private AccountRepository accountRepository;
 	@Autowired
+	private UserRepository userRepository;
+	@Autowired
+	private TransactionRepository transactionRepository;
+	@Autowired
 	private ObjectMapper om;
 	@Autowired
 	private MockMvc mockMvc;
 	@Autowired
-	private UserRepository userRepository;
-	@Autowired
 	private EntityManager em;
-
 
 	@BeforeEach
 	void init() {
-		User jeongjin = userRepository.save(newUser("jeongjin", "jeongjin"));
-		User bori = userRepository.save(newUser("bori", "bori"));
-		accountRepository.save(newAccount(1001L, jeongjin));
-		accountRepository.save(newAccount(1002L, jeongjin));
-		accountRepository.save(newAccount(2001L, bori));
-		accountRepository.save(newAccount(2002L, bori));
+		insertData();
+		// 더미 데이터 삽입 후, PC 를 초기화한다.
 		em.clear();
+	}
+
+
+	/**
+	 * User, Account, Transaction 테스트를 위한 더미 데이터를 삽입한다.
+	 */
+	private void insertData() {
+		User user1 = userRepository.save(newUser("jeongjin", "kim"));
+		User user2 = userRepository.save(newUser("bird", "king"));
+		User user3 = userRepository.save(newUser("cat", "king"));
+		User user4 = userRepository.save(newUser("dog", "king"));
+
+		Account account1 = accountRepository.save(newAccount(1001L, user1));
+		Account account2 = accountRepository.save(newAccount(2001L, user2));
+		Account account3 = accountRepository.save(newAccount(3001L, user3));
+		Account account4 = accountRepository.save(newAccount(4001L, user4));
+
+		Transaction transferTransaction1 = transactionRepository.save(
+				newTransferTransaction(account1, account2, accountRepository));
+		Transaction transferTransaction2 = transactionRepository.save(
+				newTransferTransaction(account1, account3, accountRepository));
+		Transaction transferTransaction3 = transactionRepository.save(
+				newTransferTransaction(account2, account3, accountRepository));
+		Transaction transferTransaction4 = transactionRepository.save(
+				newTransferTransaction(account3, account4, accountRepository));
+		Transaction transferTransaction5 = transactionRepository.save(
+				newTransferTransaction(account1, account4, accountRepository));
 	}
 
 
@@ -93,8 +118,6 @@ class AccountControllerTest extends DummyObject {
 
 		// then
 		assertThat(status().isCreated());
-
-
 	}
 
 	@Test
@@ -107,7 +130,6 @@ class AccountControllerTest extends DummyObject {
 		ResultActions resultActions = mockMvc.perform(delete("/api/test/account/" + number));
 		String responseBody = resultActions.andReturn().getResponse().getContentAsString();
 		log.info("[*] responseBody -> {}", responseBody);
-
 	}
 
 
@@ -136,7 +158,6 @@ class AccountControllerTest extends DummyObject {
 		 * 서비스 테스트에서 입금 과정을 테스트 했다는 것을 전제하기 때문에
 		 * 컨트롤러 레이어에서는 DTO 가 제대로 생성되고, API 요청이 잘 이루어졌는지만 확인한다.
 		 * */
-
 		// then
 		resultActions.andExpect(status().isCreated());
 	}
@@ -186,5 +207,28 @@ class AccountControllerTest extends DummyObject {
 
 		// then
 		resultActions.andExpect(status().isCreated());
+	}
+
+
+	/**
+	 * 계좌 상세보기 테스트
+	 */
+	@Test
+	@WithUserDetails(value = "jeongjin", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+	void get_account_details_test() throws Exception {
+
+		long number = 1001L;
+		String page = "0";
+
+		ResultActions resultActions =
+				mockMvc.perform(get("/api/test/account/" + number)
+						.param("page", page));
+
+		// 거래내역 저장 - 완료
+		// 거래내역이 Account 에 들어가지 않음 - 해결중
+		String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+		log.info("[*] responseBody -> {}", responseBody);
+
+		// resultActions.andExpect(jsonPath("$.data.transactions[2].balance").value(700L));
 	}
 }

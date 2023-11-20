@@ -28,7 +28,7 @@ public class Account extends BaseTime {
 	@Column(nullable = false)
 	private Long balance;       // 잔액 (기본값을 1000 으로 부여)
 
-	/**
+	/*
 	 * account.getUser().어떤필드() => 이 시점에 Lazy 로딩 발생!
 	 * 즉, @Getter 를 통해서 내가 제어권을 획득한다.
 	 */
@@ -36,6 +36,12 @@ public class Account extends BaseTime {
 	@JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_account_to_user"))
 	private User user;
 
+
+	/**
+	 * User 와 양방향 맵핑을 맺기 위해,
+	 * 영속성 컨텍스트에 저장된 Account 에 User 객체를 주입한다.
+	 * User 엔티티의 @Id 값이 맵핑된다. 따로 지정하지 않는다면 user_id 라는 컬럼이 생성 & 맵핑된다.
+	 */
 	public void setUser(User user) {
 		this.user = user;
 	}

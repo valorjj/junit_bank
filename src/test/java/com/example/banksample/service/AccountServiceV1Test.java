@@ -53,8 +53,8 @@ class AccountServiceV1Test extends DummyObject {
 		Long userId = 1L;
 
 		AccountSaveRequestDTO accountSaveRequestDTO = new AccountSaveRequestDTO();
-		accountSaveRequestDTO.setAccountNumber(1111L);
-		accountSaveRequestDTO.setAccountPassword(1111L);
+		accountSaveRequestDTO.setAccountNumber(1001L);
+		accountSaveRequestDTO.setAccountPassword(1234L);
 
 		// stub - 1
 		User newMockUser = newMockUser(userId, "jeongjin", "kim jeongjin");
@@ -114,7 +114,7 @@ class AccountServiceV1Test extends DummyObject {
 	void delete_account_by_number_test() throws Exception {
 		// given
 		Long number = 1001L;
-		Long userId = 1L;
+		Long userId = 2L;
 
 		// stub - 1
 		User newMockuser = newMockUser(userId, "jeongjin", "kim jeongjin");
@@ -122,7 +122,8 @@ class AccountServiceV1Test extends DummyObject {
 		when(accountRepository.findByNumber(any())).thenReturn(Optional.of(newMockAccount));
 
 		// when
-		Assertions.assertThatThrownBy(() -> accountServiceV1.deleteAccount(number, userId))
+		Assertions.assertThatCode(() -> accountServiceV1.deleteAccount(number, userId))
+				.as("계좌가 삭제되었나요?")
 				.isInstanceOf(CustomApiException.class);
 
 		// then
@@ -226,8 +227,6 @@ class AccountServiceV1Test extends DummyObject {
 
 	/**
 	 * 이체 테스트
-	 *
-	 *
 	 */
 	@Test
 	void transfer_account_test() throws Exception {

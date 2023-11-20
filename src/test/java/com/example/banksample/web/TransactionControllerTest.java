@@ -57,7 +57,7 @@ class TransactionControllerTest extends DummyObject {
 
 	@Test
 	@WithUserDetails(value = "jeongjin", setupBefore = TestExecutionEvent.TEST_EXECUTION)
-	void find_transaction_list() throws Exception {
+	void find_transaction_list_test() throws Exception {
 		long accountNumber = 1001L;
 		String type = "ALL";
 		String page = "0";
@@ -71,6 +71,8 @@ class TransactionControllerTest extends DummyObject {
 		resultActions.andExpect(jsonPath("$.data.transactions[2].balance").value(700L));
 	}
 
+
+
 	private void insertData() {
 		User user1 = userRepository.save(newUser("jeongjin", "kim"));
 		User user2 = userRepository.save(newUser("bird", "king"));
@@ -80,7 +82,7 @@ class TransactionControllerTest extends DummyObject {
 		Account account1 = accountRepository.save(newAccount(1001L, user1));
 		Account account2 = accountRepository.save(newAccount(2001L, user2));
 		Account account3 = accountRepository.save(newAccount(3001L, user3));
-		Account account4 = accountRepository.save(newAccount(4001L, user1));
+		Account account4 = accountRepository.save(newAccount(4001L, user4));
 
 		Transaction transferTransaction1 = transactionRepository.save(
 				newTransferTransaction(account1, account2, accountRepository));

@@ -25,6 +25,7 @@ public class TransactionRepositoryImpl implements TransactionDAO {
 
 	private final EntityManager em;
 
+
 	/*
 	 * JPQL 동적쿼리 생성
 	 * */
@@ -32,7 +33,6 @@ public class TransactionRepositoryImpl implements TransactionDAO {
 	public List<Transaction> findTransactionList(Long accountId, String type, Integer page) {
 		// type 별로 쿼리문 작성을 별도의 메서드로 분리
 		String sql = getString(type);
-
 		TypedQuery<Transaction> query = em.createQuery(sql, Transaction.class);
 
 		switch (type) {
@@ -43,8 +43,10 @@ public class TransactionRepositoryImpl implements TransactionDAO {
 				query = query.setParameter("depositAccountId", accountId);
 			}
 		}
-		query.setFirstResult(page * 10);
-		query.setMaxResults(10);
+
+		// 페이지 설정
+		query.setFirstResult(page * 5);
+		query.setMaxResults(5);
 
 		return query.getResultList();
 	}
@@ -70,6 +72,7 @@ public class TransactionRepositoryImpl implements TransactionDAO {
 				sql += "t.depositAccount.id = :depositAccountId";
 			}
 		}
+
 		return sql;
 	}
 }
