@@ -12,6 +12,16 @@ spring:
     url: jdbc:h2:tcp://localhost:1521/bank;MODE=MySQL
     username: sa
     password:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ENC(JmZN+qJ5Oncudgad52j2vy6vtTjOI2XHYla5iYxFoOmv2Rp7ot5Eq3uS9VNIGUIA7QaHVgMLsy46AdSNKPzaGSqmI9/IZG+qKQcdSaryjIPZjXwKFtfUjA==)
+            client-secret: ENC(R8+bVFTI4eyspeihdv5rCfd3sYOrD0bZaXZqGHIUV+FPFgDMvFQ3+YWxf1MNQgqs)
+            scope: profile, email
+            redirect-uri: ENC(ehs1RULEdNLOnVvj3ntmEB9zE63NfHeQQoYelNhuP4w1tX8ugsDydPBgStlZ3HU9FAdEoab5s7o=)
+
   h2:
     console:
       enabled: true
@@ -30,8 +40,8 @@ spring:
     ansi:
       enabled: always
 logging:
-#  pattern:
-#    level: "%5p [${spring.application.name}, %X{traceId:-}, %X{spanId:-}]"
+  #  pattern:
+  #    level: "%5p [${spring.application.name}, %X{traceId:-}, %X{spanId:-}]"
   level:
     '[com.example.banksample]': debug
     '[org.hibernate.type]': trace

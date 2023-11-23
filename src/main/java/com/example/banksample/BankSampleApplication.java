@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @EnableJpaAuditing
 @Slf4j
 @PropertySource(value = {
-  "classpath:env/env.yml"
+  "classpath:env/env.yml",
   }, factory = EnvConfig.class)
 public class BankSampleApplication {
 

@@ -71,14 +71,12 @@ public class SecurityConfig {
 	}
 
 	public CorsConfigurationSource configurationSource() {
-		log.info("[디버그] CorsConfigurationSource 가 SecurityFilterChain 에 등록합니다.");
 		CorsConfiguration configuration = new CorsConfiguration();
 		// 모든 HTTP 헤더를 허용한다.
 		configuration.addAllowedHeader("*");
 		// GET, POST, PUT, DELETE, OPTIONS 를 허용한다.
 		configuration.addAllowedMethod("*");
 		// 모든 IP 주소를 허용한다.
-		// TODO: 배포 시, 프론트엔드 IP 만 추가하는 걸로 수정
 		configuration.addAllowedOriginPattern("*");
 		// 클라이언트에서 쿠키 요청 허용
 		configuration.setAllowCredentials(true);
